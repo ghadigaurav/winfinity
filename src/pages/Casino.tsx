@@ -1,8 +1,7 @@
-
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Dice, Spade, TrendingUp, Armchair } from "lucide-react";
+import { ChevronRight, Dices, Spade, TrendingUp, Armchair } from "lucide-react";
 
 const CasinoPage = () => {
   const games = [
@@ -37,7 +36,7 @@ const CasinoPage = () => {
       id: 4, 
       title: "Plinko", 
       description: "Drop the ball and watch it bounce through pegs to determine your prize.",
-      icon: Dice,
+      icon: Dices,
       path: "/plinko",
       color: "winfinity-yellow",
       bgColor: "from-winfinity-blue/20 to-winfinity-yellow/20"

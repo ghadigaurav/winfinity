@@ -1,8 +1,7 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Diamond, Ticket, Dice, ChevronRight, ChevronLeft, Star, TrendingUp, Trophy } from "lucide-react";
+import { Diamond, Ticket, Dices, ChevronRight, ChevronLeft, Star, TrendingUp, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -102,7 +101,6 @@ const HomePage = () => {
     }
   ];
 
-  // Simulate jackpot increase
   useEffect(() => {
     const interval = setInterval(() => {
       setJackpot(prev => {
@@ -114,7 +112,6 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -133,7 +130,6 @@ const HomePage = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Handle carousel
   useEffect(() => {
     const carouselTimer = setInterval(() => {
       setShowAnimation(false);
@@ -166,17 +162,13 @@ const HomePage = () => {
 
   return (
     <div className="space-y-8 max-w-[1400px] mx-auto">
-      {/* Hero Carousel */}
       <div className="relative overflow-hidden rounded-xl hero-bg">
         <div className={cn(
           "transition-opacity duration-500 ease-in-out",
           showAnimation ? "opacity-100" : "opacity-0"
         )}>
           <div className="relative h-[400px] md:h-[480px] rounded-xl overflow-hidden">
-            {/* Slide Background */}
             <div className="absolute inset-0 bg-gradient-to-r from-winfinity-darker-blue via-winfinity-dark-blue to-winfinity-blue opacity-90 z-10" />
-            
-            {/* Background Image */}
             {slides[currentSlide].image && (
               <img 
                 src={slides[currentSlide].image} 
@@ -184,8 +176,6 @@ const HomePage = () => {
                 className="absolute inset-0 w-full h-full object-cover object-center opacity-40"
               />
             )}
-            
-            {/* Content */}
             <div className="relative z-20 flex flex-col md:flex-row h-full">
               <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
                 <p className="text-winfinity-cyan font-semibold mb-2 tracking-wider">
@@ -198,7 +188,6 @@ const HomePage = () => {
                   {slides[currentSlide].description}
                 </p>
                 
-                {/* For lottery slide, show the jackpot and countdown */}
                 {currentSlide === 0 && (
                   <div className="mb-6">
                     <div className="flex items-center mb-2">
@@ -241,7 +230,6 @@ const HomePage = () => {
           </div>
         </div>
         
-        {/* Navigation Buttons */}
         <Button 
           variant="outline" 
           size="icon"
@@ -260,7 +248,6 @@ const HomePage = () => {
           <ChevronRight size={24} />
         </Button>
         
-        {/* Indicators */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
           {slides.map((_, index) => (
             <button
@@ -283,7 +270,6 @@ const HomePage = () => {
         </div>
       </div>
       
-      {/* Feature Categories */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link to="/lottery" className="group">
           <Card className="bg-gradient-to-br from-winfinity-blue/20 to-winfinity-purple/20 border-winfinity-purple/20 hover:border-winfinity-purple/40 transition-all hover:shadow-lg hover:shadow-winfinity-purple/10 overflow-hidden relative h-[180px]">
@@ -314,7 +300,7 @@ const HomePage = () => {
                   <h3 className="text-xl font-bold text-white">Casino Games</h3>
                   <p className="text-white/70 mt-1">Slots, blackjack, and more</p>
                 </div>
-                <Dice size={40} className="text-winfinity-cyan opacity-70 group-hover:opacity-100 transition-opacity" />
+                <Dices size={40} className="text-winfinity-cyan opacity-70 group-hover:opacity-100 transition-opacity" />
               </div>
               <div className="mt-auto">
                 <div className="flex items-center text-winfinity-cyan font-medium">
@@ -349,7 +335,6 @@ const HomePage = () => {
         </Link>
       </div>
       
-      {/* Popular Games */}
       <div>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-white">Popular Games</h2>
@@ -386,7 +371,6 @@ const HomePage = () => {
         </div>
       </div>
       
-      {/* Tournaments & Leaderboard */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="bg-winfinity-blue/10 border-winfinity-blue/30 overflow-hidden">
           <div className="p-6">
@@ -476,3 +460,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
