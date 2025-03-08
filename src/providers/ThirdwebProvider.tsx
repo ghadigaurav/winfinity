@@ -1,16 +1,13 @@
 
 import React from "react";
 import { ThirdwebProvider as ThirdwebSDKProvider } from "@thirdweb-dev/react";
-
-// Optimism Goerli testnet
-const activeChainId = 420;
+import { Optimism } from "@thirdweb-dev/chains";
 
 export const ThirdwebProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThirdwebSDKProvider
-      activeChain={activeChainId}
+      activeChain={Optimism}
       clientId="your-client-id" // Replace with your thirdweb client ID
-      supportedChains={[activeChainId]}
     >
       {children}
     </ThirdwebSDKProvider>

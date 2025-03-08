@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card as UICard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,9 +56,8 @@ const BlackjackPage = () => {
     let value = hand.reduce((sum, card) => sum + card.numericValue, 0);
     let aces = hand.filter(card => card.value === "A").length;
     
-    // Adjust for aces
     while (value > 21 && aces > 0) {
-      value -= 10; // Convert an Ace from 11 to 1
+      value -= 10;
       aces--;
     }
     
@@ -69,11 +67,9 @@ const BlackjackPage = () => {
   const startGame = () => {
     const deck = createDeck();
     
-    // Draw two cards for player
     const [playerCard1, deck1] = drawCard(deck);
     const [playerCard2, deck2] = drawCard(deck1);
     
-    // Draw two cards for dealer
     const [dealerCard1, deck3] = drawCard(deck2);
     const [dealerCard2, _] = drawCard(deck3);
     
@@ -103,7 +99,6 @@ const BlackjackPage = () => {
     
     setGameState('dealerTurn');
     
-    // Dealer draws until 17 or higher
     let currentDealerHand = [...dealerHand];
     let currentDealerValue = calculateHandValue(currentDealerHand);
     
@@ -159,9 +154,8 @@ const BlackjackPage = () => {
             </div>
           ) : (
             <div>
-              {/* Dealer's Hand */}
               <div className="mb-8">
-                <h3 className="text-white mb-2">Dealer's Hand: {gameState !== 'idle' && gameState !== 'playing' ? calculateHandValue(dealerHand) : '?'}</h3>
+                <h3 className="text-white mb-2">Dealer's Hand: {gameState !== 'playing' ? calculateHandValue(dealerHand) : '?'}</h3>
                 <div className="flex gap-2">
                   {dealerHand.map((card, index) => (
                     <div 
@@ -186,7 +180,6 @@ const BlackjackPage = () => {
                 </div>
               </div>
               
-              {/* Player's Hand */}
               <div className="mb-8">
                 <h3 className="text-white mb-2">Your Hand: {calculateHandValue(playerHand)}</h3>
                 <div className="flex gap-2 flex-wrap">
@@ -204,7 +197,6 @@ const BlackjackPage = () => {
                 </div>
               </div>
               
-              {/* Game Result */}
               {gameState === 'gameOver' && (
                 <div className={`text-center my-4 p-3 rounded-lg ${
                   result === 'win' ? 'bg-green-500/20 text-green-400' : 
@@ -223,7 +215,6 @@ const BlackjackPage = () => {
                 </div>
               )}
               
-              {/* Game Controls */}
               <div className="flex justify-center gap-4 mt-4">
                 {gameState === 'playing' && (
                   <>
