@@ -1,3 +1,4 @@
+
 import { NavLink } from "react-router-dom";
 import { 
   Home, 
@@ -59,9 +60,12 @@ export const Sidebar = () => {
       <div className="flex flex-col h-full py-4">
         <div className="px-4 mb-6 flex items-center">
           {!isCollapsed && (
-            <div className="flex items-center gap-2">
-              <Diamond size={24} className="text-winfinity-cyan animate-pulse" />
-              <span className="text-xl font-bold tracking-wider text-white">WINFINITY</span>
+            <div className="flex flex-col items-center w-full">
+              <div className="flex items-center gap-2">
+                <Diamond size={28} className="text-winfinity-cyan animate-pulse" />
+                <span className="text-xl font-bold tracking-wider text-white">WINFINITY</span>
+              </div>
+              <span className="text-winfinity-cyan text-sm mt-1">3.0</span>
             </div>
           )}
           {isCollapsed && (

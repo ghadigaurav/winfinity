@@ -8,7 +8,6 @@ import {
   Menu,
   X
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { ConnectWallet } from "../web3/ConnectWallet";
 
@@ -37,29 +36,8 @@ export const Navbar = () => {
           </Button>
         </div>
         
-        <div className="hidden md:flex md:gap-10">
-          <Link 
-            to="/" 
-            className="text-xl font-bold tracking-wider text-white hover:text-winfinity-cyan transition-colors"
-          >
-            WINFINITY 3.0
-          </Link>
-          
-          <nav className="hidden md:flex items-center gap-6">
-            <Link to="/lottery" className="text-sm font-medium hover:text-winfinity-cyan transition-colors">
-              Lottery
-            </Link>
-            <Link to="/casino" className="text-sm font-medium hover:text-winfinity-cyan transition-colors">
-              Casino
-            </Link>
-            <Link to="/slots" className="text-sm font-medium hover:text-winfinity-cyan transition-colors">
-              Slots
-            </Link>
-            <Link to="/rewards" className="text-sm font-medium hover:text-winfinity-cyan transition-colors">
-              Rewards
-            </Link>
-          </nav>
-        </div>
+        {/* Removed website name and navigation links that are in sidebar */}
+        <div className="flex-1"></div>
         
         <div className="flex items-center gap-4">
           {isSearchOpen ? (
