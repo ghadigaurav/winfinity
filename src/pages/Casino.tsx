@@ -1,7 +1,8 @@
+
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Dices, Spade, TrendingUp, Armchair } from "lucide-react";
+import { Dices, Spade, TrendingUp, Armchair } from "lucide-react";
 
 const CasinoPage = () => {
   const games = [
@@ -71,40 +72,6 @@ const CasinoPage = () => {
               </Card>
             </Link>
           ))}
-        </div>
-      </div>
-      
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white mb-6">Featured Games</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[
-            { id: 1, title: "Sweet Bonanza", image: "https://images.unsplash.com/photo-1611486212355-d276af4581e0?q=80&w=300&auto=format&fit=crop" },
-            { id: 2, title: "Fruit Party", image: "https://images.unsplash.com/photo-1595778835999-6b77e4ba0e16?q=80&w=300&auto=format&fit=crop" },
-            { id: 3, title: "Gates of Olympus", image: "https://images.unsplash.com/photo-1566345984367-57e7ec5133a5?q=80&w=300&auto=format&fit=crop" },
-            { id: 4, title: "Sugar Rush", image: "https://images.unsplash.com/photo-1630479543894-a79a71fedefe?q=80&w=300&auto=format&fit=crop" },
-            { id: 5, title: "Wild West", image: "https://images.unsplash.com/photo-1472698938026-79bed881e5b7?q=80&w=300&auto=format&fit=crop" },
-            { id: 6, title: "Starlight Princess", image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=300&auto=format&fit=crop" }
-          ].map(game => (
-            <Card key={game.id} className="bg-winfinity-blue/20 border-winfinity-blue/30 overflow-hidden hover:border-winfinity-cyan/50 transition-all hover:shadow-lg hover:shadow-winfinity-cyan/10 group">
-              <div className="relative h-36 overflow-hidden">
-                <img 
-                  src={game.image} 
-                  alt={game.title}
-                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-winfinity-darker-blue to-transparent opacity-60" />
-                <div className="absolute bottom-2 left-2 right-2">
-                  <div className="text-sm font-semibold text-white">{game.title}</div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-        
-        <div className="text-center mt-6">
-          <Button variant="outline" className="border-winfinity-blue/40 text-winfinity-cyan hover:bg-winfinity-blue/20">
-            View All Games <ChevronRight size={16} className="ml-2" />
-          </Button>
         </div>
       </div>
       

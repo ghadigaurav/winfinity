@@ -1,69 +1,10 @@
+
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Diamond, Ticket, Dices, ChevronRight, ChevronLeft, Star, TrendingUp, Trophy } from "lucide-react";
+import { Diamond, Ticket, Dices, ChevronRight, ChevronLeft, TrendingUp, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-
-interface GameCard {
-  id: number;
-  title: string;
-  image: string;
-  category: string;
-  isPopular: boolean;
-  path: string;
-}
-
-const popularGames: GameCard[] = [
-  {
-    id: 1,
-    title: "Neon Slots",
-    image: "https://images.unsplash.com/photo-1611486212355-d276af4581e0?q=80&w=300&auto=format&fit=crop",
-    category: "Slots",
-    isPopular: true,
-    path: "/slots"
-  },
-  {
-    id: 2,
-    title: "Crypto Blackjack",
-    image: "https://images.unsplash.com/photo-1634553311304-8978b0079f59?q=80&w=300&auto=format&fit=crop",
-    category: "Table Games",
-    isPopular: true,
-    path: "/blackjack"
-  },
-  {
-    id: 3,
-    title: "Crypto Crash",
-    image: "https://images.unsplash.com/photo-1600861194942-f883de0dfe96?q=80&w=300&auto=format&fit=crop",
-    category: "Instant Win",
-    isPopular: true,
-    path: "/crash"
-  },
-  {
-    id: 4,
-    title: "Digital Plinko",
-    image: "https://images.unsplash.com/photo-1643729041767-61b15e6cd0a5?q=80&w=300&auto=format&fit=crop",
-    category: "Instant Win",
-    isPopular: false,
-    path: "/plinko"
-  },
-  {
-    id: 5,
-    title: "Lucky Dice",
-    image: "https://images.unsplash.com/photo-1592981762657-c4d3c59a3711?q=80&w=300&auto=format&fit=crop",
-    category: "Dice",
-    isPopular: false,
-    path: "/casino"
-  },
-  {
-    id: 6,
-    title: "VR Poker",
-    image: "https://images.unsplash.com/photo-1629338208820-9206f896bf45?q=80&w=300&auto=format&fit=crop",
-    category: "Table Games",
-    isPopular: false,
-    path: "/casino"
-  }
-];
 
 const HomePage = () => {
   const [jackpot, setJackpot] = useState("128.74");
@@ -333,42 +274,6 @@ const HomePage = () => {
             <div className="absolute bottom-0 right-0 w-24 h-24 bg-winfinity-pink/20 rounded-tl-full" />
           </Card>
         </Link>
-      </div>
-      
-      <div>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-white">Popular Games</h2>
-          <Button variant="link" className="text-winfinity-cyan">
-            View All <ChevronRight size={16} className="ml-1" />
-          </Button>
-        </div>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {popularGames.map(game => (
-            <Link key={game.id} to={game.path} className="group">
-              <Card className="bg-winfinity-blue/20 border-winfinity-blue/30 overflow-hidden hover:border-winfinity-cyan/50 transition-all hover:shadow-lg hover:shadow-winfinity-cyan/10">
-                <div className="relative h-36 overflow-hidden">
-                  <img 
-                    src={game.image} 
-                    alt={game.title}
-                    className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
-                  />
-                  {game.isPopular && (
-                    <div className="absolute top-2 right-2 bg-winfinity-pink rounded-full px-2 py-0.5 text-xs font-semibold flex items-center">
-                      <Star size={10} className="mr-1" />
-                      Popular
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-winfinity-darker-blue to-transparent opacity-60" />
-                  <div className="absolute bottom-2 left-2 right-2">
-                    <div className="text-xs text-white/70">{game.category}</div>
-                    <div className="text-sm font-semibold text-white">{game.title}</div>
-                  </div>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </div>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -7,7 +7,7 @@ export const ThirdwebProvider = ({ children }: { children: React.ReactNode }) =>
   return (
     <ThirdwebSDKProvider
       activeChain={Optimism}
-      clientId="your-client-id" // Replace with your thirdweb client ID
+      clientId="7a97eea9ac1d4d5c2ee8c6f8bf28af69" // Using a demo client ID
     >
       {children}
     </ThirdwebSDKProvider>

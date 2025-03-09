@@ -12,12 +12,12 @@ import {
   LifeBuoy,
   ChevronLeft,
   ChevronRight,
-  ExternalLink
+  ExternalLink,
+  Diamond
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Diamond } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +30,23 @@ export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isWalletDialogOpen, setIsWalletDialogOpen] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
+
+  // Listen for wallet balance updates from other components
+  useEffect(() => {
+    const handleWalletUpdate = (event: CustomEvent) => {
+      const { amount } = event.detail;
+      setWalletBalance(prev => {
+        const newBalance = prev + amount;
+        return Math.max(0, newBalance); // Ensure balance doesn't go below 0
+      });
+    };
+
+    window.addEventListener('walletUpdate', handleWalletUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('walletUpdate', handleWalletUpdate as EventListener);
+    };
+  }, []);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);

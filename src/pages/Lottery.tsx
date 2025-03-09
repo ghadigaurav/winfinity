@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,7 +14,8 @@ import {
   ChevronLeft, 
   Info,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  Copy
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { LivePurchasesTable } from "@/components/lottery/LivePurchasesTable";
@@ -25,6 +27,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useLotteryContract } from "@/services/LotteryContract";
+import { useAddress } from "@thirdweb-dev/react";
 
 const LotteryPage = () => {
   const [jackpot, setJackpot] = useState(128.74);
@@ -38,8 +42,18 @@ const LotteryPage = () => {
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [txHash, setTxHash] = useState("");
   const [myTickets, setMyTickets] = useState<{id: number, numbers: number[], purchaseDate: Date}[]>([]);
   const { toast } = useToast();
+  const { purchaseTickets, isLoading } = useLotteryContract();
+  const walletAddress = useAddress();
+
+  // This is a shared function to update the wallet balance across components
+  const updateWalletBalance = (amount: number) => {
+    // Create and dispatch a custom event for other components to listen to
+    const event = new CustomEvent('walletUpdate', { detail: { amount } });
+    window.dispatchEvent(event);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -101,34 +115,66 @@ const LotteryPage = () => {
     }, 800);
   };
 
-  const handleConfirmPurchase = () => {
+  const handleConfirmPurchase = async () => {
     setConfirmationOpen(false);
     setIsPurchasing(true);
     
-    setTimeout(() => {
-      setIsPurchasing(false);
-      setPurchaseSuccess(true);
+    try {
+      // Call the blockchain contract
+      const result = await purchaseTickets(ticketCount, myNumbers, totalPrice);
       
-      const newTickets = Array.from({ length: ticketCount }, (_, i) => ({
-        id: myTickets.length + i + 1,
-        numbers: myNumbers,
-        purchaseDate: new Date()
-      }));
-      
-      setMyTickets(prev => [...prev, ...newTickets]);
-      
+      if (result.success) {
+        setTxHash(result.data.receipt.transactionHash);
+        setPurchaseSuccess(true);
+        
+        const newTickets = Array.from({ length: ticketCount }, (_, i) => ({
+          id: myTickets.length + i + 1,
+          numbers: myNumbers,
+          purchaseDate: new Date()
+        }));
+        
+        setMyTickets(prev => [...prev, ...newTickets]);
+        
+        toast({
+          title: "Tickets Purchased Successfully!",
+          description: `You've purchased ${ticketCount} ticket(s) for the next draw.`,
+        });
+        
+        // Update wallet balance after successful purchase
+        updateWalletBalance(-totalPrice);
+        
+        setTimeout(() => {
+          setPurchaseSuccess(false);
+        }, 5000);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Transaction Failed",
+          description: "There was an error processing your ticket purchase.",
+        });
+      }
+    } catch (error) {
+      console.error("Purchase error:", error);
       toast({
-        title: "Tickets Purchased Successfully!",
-        description: `You've purchased ${ticketCount} ticket(s) for the next draw.`,
+        variant: "destructive",
+        title: "Transaction Failed",
+        description: "There was an error processing your ticket purchase.",
       });
-      
-      setTimeout(() => {
-        setPurchaseSuccess(false);
-      }, 5000);
-    }, 1500);
+    } finally {
+      setIsPurchasing(false);
+    }
   };
 
   const handleTicketPurchase = () => {
+    if (!walletAddress) {
+      toast({
+        variant: "destructive",
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet to purchase tickets.",
+      });
+      return;
+    }
+    
     if (myNumbers.length === 0) {
       toast({
         variant: "destructive",
@@ -314,7 +360,7 @@ const LotteryPage = () => {
                     <div>
                       <p className="text-white font-medium">Transaction Successful!</p>
                       <a 
-                        href={`https://sepolia.etherscan.io/tx/0x${Math.random().toString(16).slice(2)}`} 
+                        href={`https://optimism.etherscan.io/tx/${txHash}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-winfinity-cyan text-sm hover:underline"
@@ -375,7 +421,7 @@ const LotteryPage = () => {
                             </div>
                             <div className="text-right">
                               <a 
-                                href={`https://sepolia.etherscan.io/tx/0x${Math.random().toString(16).slice(2)}`}
+                                href={`https://optimism.etherscan.io/tx/0x${Math.random().toString(16).slice(2)}`}
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="text-winfinity-cyan text-xs hover:underline"
@@ -558,7 +604,7 @@ const LotteryPage = () => {
             <div className="mt-4 flex items-start gap-2 bg-winfinity-blue/20 p-3 rounded-lg">
               <AlertCircle className="text-winfinity-yellow flex-shrink-0 mt-0.5" size={16} />
               <div className="text-sm text-white/90">
-                This will trigger a MetaMask transaction. Confirm in your wallet to complete the purchase.
+                This will trigger a blockchain transaction. Confirm in your wallet to complete the purchase.
               </div>
             </div>
           </div>
@@ -574,8 +620,17 @@ const LotteryPage = () => {
             <Button 
               className="bg-winfinity-cyan text-winfinity-darker-blue hover:bg-winfinity-cyan/90"
               onClick={handleConfirmPurchase}
+              disabled={isPurchasing}
             >
-              Confirm & Pay
+              {isPurchasing ? (
+                <>
+                  <span className="mr-2">Processing...</span>
+                </>
+              ) : (
+                <>
+                  Confirm & Pay
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -585,4 +640,3 @@ const LotteryPage = () => {
 };
 
 export default LotteryPage;
-
