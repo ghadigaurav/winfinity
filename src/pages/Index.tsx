@@ -79,7 +79,7 @@ const HomePage = () => {
       cta: "Buy Tickets",
       path: "/lottery",
       gradient: "from-winfinity-purple to-winfinity-cyan",
-      image: "/lovable-uploads/32cc3c44-7e84-42cb-825c-fcea8ae781b5.png"
+      image: "/lovable-uploads/1401250f-f7ab-40b8-bda1-295c0a9216d7.png"
     },
     {
       title: "Daily Crypto Rewards",
@@ -88,7 +88,7 @@ const HomePage = () => {
       cta: "Claim Rewards",
       path: "/rewards",
       gradient: "from-winfinity-pink to-winfinity-orange",
-      image: "/lovable-uploads/ddc22fd5-8af3-4921-8e72-6b3b7d6b224c.png"
+      image: "/lovable-uploads/2f90c80e-b2f7-4d62-bbdb-f607c0b17acd.png"
     },
     {
       title: "Weekend Tournament",
@@ -97,7 +97,7 @@ const HomePage = () => {
       cta: "Register Now",
       path: "/casino",
       gradient: "from-winfinity-cyan to-winfinity-yellow",
-      image: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?q=80&w=1200&auto=format&fit=crop"
+      image: "/lovable-uploads/9608690a-c7fb-46b5-8bf2-e02d4573fb15.png"
     }
   ];
 
@@ -168,12 +168,12 @@ const HomePage = () => {
           showAnimation ? "opacity-100" : "opacity-0"
         )}>
           <div className="relative h-[400px] md:h-[480px] rounded-xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-winfinity-darker-blue via-winfinity-dark-blue to-winfinity-blue opacity-90 z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-winfinity-darker-blue via-winfinity-dark-blue to-winfinity-blue opacity-80 z-10" />
             {slides[currentSlide].image && (
               <img 
                 src={slides[currentSlide].image} 
                 alt={slides[currentSlide].title}
-                className="absolute inset-0 w-full h-full object-cover object-center opacity-40"
+                className="absolute inset-0 w-full h-full object-cover object-center"
               />
             )}
             <div className="relative z-20 flex flex-col md:flex-row h-full">
@@ -460,4 +460,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
