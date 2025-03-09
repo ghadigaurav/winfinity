@@ -14,6 +14,8 @@ import BlackjackPage from "@/pages/Blackjack";
 import CrashPage from "@/pages/Crash";
 import PlinkoPage from "@/pages/Plinko";
 import RewardsPage from "@/pages/Rewards";
+import CommunityPage from "@/pages/Community";
+import SupportPage from "@/pages/Support";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +37,8 @@ const App = () => (
               <Route path="crash" element={<CrashPage />} />
               <Route path="plinko" element={<PlinkoPage />} />
               <Route path="rewards" element={<RewardsPage />} />
+              <Route path="community" element={<CommunityPage />} />
+              <Route path="support" element={<SupportPage />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

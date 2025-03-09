@@ -1,13 +1,71 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Award, Gift, Trophy, Users, Diamond, Clock, ChevronRight } from "lucide-react";
+import { Award, Gift, Trophy, Users, Diamond, Clock, ChevronRight, Check, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const RewardsPage = () => {
   const [activeTab, setActiveTab] = useState("cashback");
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [pendingCashback, setPendingCashback] = useState(0.042);
+  const [isClaimingCashback, setIsClaimingCashback] = useState(false);
+  const { toast } = useToast();
+  
+  // Simulate wallet balance fetching
+  useEffect(() => {
+    // Set initial balance
+    setWalletBalance(0.75);
+    
+    // Check localStorage for any previously claimed rewards
+    const claimedRewards = localStorage.getItem('claimedRewards');
+    if (claimedRewards) {
+      const rewardsData = JSON.parse(claimedRewards);
+      setWalletBalance(prev => prev + rewardsData.total);
+    }
+  }, []);
+  
+  const handleClaimCashback = () => {
+    setIsClaimingCashback(true);
+    
+    // Simulate blockchain transaction
+    setTimeout(() => {
+      // Update wallet balance
+      setWalletBalance(prev => {
+        const newBalance = prev + pendingCashback;
+        
+        // Store claimed rewards in localStorage
+        const storedRewards = localStorage.getItem('claimedRewards');
+        const rewardsData = storedRewards ? JSON.parse(storedRewards) : { total: 0, claims: [] };
+        rewardsData.total += pendingCashback;
+        rewardsData.claims.push({
+          amount: pendingCashback,
+          timestamp: new Date().toISOString(),
+          type: 'cashback'
+        });
+        localStorage.setItem('claimedRewards', JSON.stringify(rewardsData));
+        
+        return newBalance;
+      });
+      
+      // Reset pending cashback
+      setPendingCashback(0);
+      
+      setIsClaimingCashback(false);
+      
+      toast({
+        title: "Cashback Claimed Successfully",
+        description: `${pendingCashback} WINF has been added to your wallet`,
+      });
+      
+      // Generate new pending cashback after some time
+      setTimeout(() => {
+        setPendingCashback(0.015);
+      }, 30000);
+    }, 2000);
+  };
   
   return (
     <div className="max-w-[1200px] mx-auto">
@@ -125,31 +183,80 @@ const RewardsPage = () => {
                   <Progress value={75} className="h-2 bg-winfinity-blue/30" indicatorClassName="bg-winfinity-cyan" />
                 </div>
                 
-                <Button className="w-full bg-gradient-to-r from-winfinity-purple to-winfinity-cyan text-white button-shine">
-                  Claim 0.042 ETH Cashback
+                <div className="mb-4">
+                  <h3 className="text-white font-semibold mb-2">Your WINF Wallet</h3>
+                  <div className="bg-winfinity-blue/20 p-4 rounded-lg">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <Diamond size={18} className="text-winfinity-cyan mr-2" />
+                        <span className="text-white">Current Balance:</span>
+                      </div>
+                      <span className="text-winfinity-cyan font-bold">{walletBalance.toFixed(3)} WINF</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <Button 
+                  className="w-full bg-gradient-to-r from-winfinity-purple to-winfinity-cyan text-white button-shine"
+                  onClick={handleClaimCashback}
+                  disabled={pendingCashback <= 0 || isClaimingCashback}
+                >
+                  {isClaimingCashback ? (
+                    <>
+                      <Loader2 size={16} className="mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : pendingCashback <= 0 ? (
+                    <>
+                      <Check size={16} className="mr-2" />
+                      No Cashback Available
+                    </>
+                  ) : (
+                    <>
+                      Claim {pendingCashback} WINF Cashback
+                    </>
+                  )}
                 </Button>
               </div>
               
               <div className="flex-1">
                 <h3 className="text-white font-semibold mb-4">Cashback History</h3>
                 <div className="space-y-3">
-                  {[
-                    { date: "Mar 7, 2025", amount: "0.038 ETH", status: "Claimed" },
-                    { date: "Mar 6, 2025", amount: "0.052 ETH", status: "Claimed" },
-                    { date: "Mar 5, 2025", amount: "0.017 ETH", status: "Claimed" },
-                    { date: "Mar 4, 2025", amount: "0.063 ETH", status: "Claimed" },
-                    { date: "Mar 3, 2025", amount: "0.029 ETH", status: "Claimed" }
-                  ].map((entry, index) => (
-                    <div key={index} className="flex justify-between items-center p-3 bg-winfinity-blue/20 rounded-lg">
-                      <div>
-                        <div className="text-white">{entry.amount}</div>
-                        <div className="text-white/60 text-sm">{entry.date}</div>
+                  {/* Combine static data with dynamic claimed rewards */}
+                  {(() => {
+                    // Get claimed rewards from localStorage
+                    const claimedRewards = localStorage.getItem('claimedRewards');
+                    const claimedHistory = claimedRewards 
+                      ? JSON.parse(claimedRewards).claims.map((claim: any) => ({
+                          date: new Date(claim.timestamp).toLocaleDateString(),
+                          amount: `${claim.amount} WINF`,
+                          status: "Claimed"
+                        }))
+                      : [];
+                    
+                    // Combine with static data
+                    const allHistory = [
+                      ...claimedHistory,
+                      { date: "Mar 7, 2025", amount: "0.038 WINF", status: "Claimed" },
+                      { date: "Mar 6, 2025", amount: "0.052 WINF", status: "Claimed" },
+                      { date: "Mar 5, 2025", amount: "0.017 WINF", status: "Claimed" },
+                      { date: "Mar 4, 2025", amount: "0.063 WINF", status: "Claimed" },
+                      { date: "Mar 3, 2025", amount: "0.029 WINF", status: "Claimed" }
+                    ];
+                    
+                    // Sort by date (most recent first) and limit to 5 entries
+                    return allHistory.slice(0, 5).map((entry, index) => (
+                      <div key={index} className="flex justify-between items-center p-3 bg-winfinity-blue/20 rounded-lg">
+                        <div>
+                          <div className="text-white">{entry.amount}</div>
+                          <div className="text-white/60 text-sm">{entry.date}</div>
+                        </div>
+                        <div className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">
+                          {entry.status}
+                        </div>
                       </div>
-                      <div className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">
-                        {entry.status}
-                      </div>
-                    </div>
-                  ))}
+                    ));
+                  })()}
                 </div>
               </div>
             </div>

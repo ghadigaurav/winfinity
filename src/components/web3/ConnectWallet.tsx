@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Wallet, Loader2 } from "lucide-react";
@@ -10,21 +10,82 @@ export const ConnectWallet = () => {
   const [walletAddress, setWalletAddress] = useState("");
   const { toast } = useToast();
 
+  // Check if wallet is already connected on component mount
+  useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (window.ethereum && window.ethereum.selectedAddress) {
+        setWalletAddress(window.ethereum.selectedAddress);
+        setIsConnected(true);
+      }
+    };
+    
+    checkWalletConnection();
+  }, []);
+
+  // Handle MetaMask account changes
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts: string[]) => {
+        if (accounts.length > 0) {
+          setWalletAddress(accounts[0]);
+          setIsConnected(true);
+          
+          toast({
+            title: "Wallet Changed",
+            description: `Connected to ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`,
+          });
+        } else {
+          setIsConnected(false);
+          setWalletAddress("");
+          
+          toast({
+            title: "Wallet Disconnected",
+            description: "Your wallet has been disconnected",
+            variant: "destructive",
+          });
+        }
+      });
+    }
+    
+    return () => {
+      if (window.ethereum && window.ethereum.removeListener) {
+        window.ethereum.removeListener('accountsChanged', () => {});
+      }
+    };
+  }, [toast]);
+
   const handleConnect = async () => {
     setIsConnecting(true);
     
-    // Mock connection for demo
-    setTimeout(() => {
-      const mockAddress = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
-      setWalletAddress(mockAddress);
-      setIsConnected(true);
-      setIsConnecting(false);
-      
+    try {
+      if (window.ethereum) {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const account = accounts[0];
+        
+        setWalletAddress(account);
+        setIsConnected(true);
+        
+        toast({
+          title: "Wallet Connected",
+          description: `Connected to ${account.slice(0, 6)}...${account.slice(-4)}`,
+        });
+      } else {
+        toast({
+          title: "MetaMask Not Found",
+          description: "Please install MetaMask to connect your wallet",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error connecting to wallet:", error);
       toast({
-        title: "Wallet Connected",
-        description: `Connected to ${mockAddress.slice(0, 6)}...${mockAddress.slice(-4)}`,
+        title: "Connection Failed",
+        description: "Failed to connect to your wallet",
+        variant: "destructive",
       });
-    }, 1500);
+    } finally {
+      setIsConnecting(false);
+    }
   };
 
   const handleDisconnect = () => {

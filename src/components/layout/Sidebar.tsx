@@ -9,18 +9,27 @@ import {
   Armchair, 
   Award, 
   Users, 
-  Settings,
   LifeBuoy,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Diamond } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isWalletDialogOpen, setIsWalletDialogOpen] = useState(false);
+  const [walletBalance, setWalletBalance] = useState(0);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -107,28 +116,75 @@ export const Sidebar = () => {
         
         <div className="mt-auto px-3">
           <div className="space-y-1">
-            <NavItem to="/settings" icon={Settings} label="Settings" />
             <NavItem to="/support" icon={LifeBuoy} label="Help & Support" />
           </div>
         </div>
         
         {!isCollapsed && (
-          <div className="mt-6 mx-3 p-3 rounded-lg bg-gradient-to-r from-winfinity-purple/20 to-winfinity-cyan/20 border border-white/5">
+          <div className="mt-6 mx-3 p-3 rounded-lg bg-gradient-to-r from-winfinity-purple/20 to-winfinity-cyan/20 border border-white/5 mb-8">
             <p className="text-xs text-gray-300 mb-2">
               Current Balance
             </p>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-1.5">
                 <Diamond size={16} className="text-winfinity-cyan" />
-                <span className="font-bold text-white">0.00 WINF</span>
+                <span className="font-bold text-white">{walletBalance.toFixed(2)} WINF</span>
               </div>
-              <Button size="sm" className="bg-winfinity-purple hover:bg-winfinity-purple/90 text-xs py-1 h-7">
-                Claim
+              <Button 
+                size="sm" 
+                className="bg-winfinity-blue hover:bg-winfinity-blue/90 text-xs py-1 h-7"
+                onClick={() => setIsWalletDialogOpen(true)}
+              >
+                View
               </Button>
             </div>
           </div>
         )}
       </div>
+
+      <Dialog open={isWalletDialogOpen} onOpenChange={setIsWalletDialogOpen}>
+        <DialogContent className="bg-winfinity-darker-blue border-winfinity-blue/30 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-white">WINF Token Details</DialogTitle>
+            <DialogDescription className="text-white/70">
+              Your WINF token holdings and value
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <div className="flex justify-between py-2 border-b border-winfinity-blue/20">
+              <span className="text-white/70">WINF Balance:</span>
+              <span className="text-white font-medium">{walletBalance.toFixed(2)} WINF</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-winfinity-blue/20">
+              <span className="text-white/70">USD Value:</span>
+              <span className="text-winfinity-cyan font-semibold">${(walletBalance * 0.25).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-winfinity-blue/20">
+              <span className="text-white/70">Token Price:</span>
+              <span className="text-winfinity-yellow font-semibold">$0.25 USD per WINF</span>
+            </div>
+
+            <div className="mt-4 p-3 rounded-lg bg-winfinity-blue/20">
+              <h4 className="font-medium text-white mb-2">Recent Transactions</h4>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                <div className="flex justify-between text-sm">
+                  <span className="text-white/70">Cashback reward</span>
+                  <span className="text-green-400">+0.35 WINF</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-white/70">Lottery consolation</span>
+                  <span className="text-green-400">+0.20 WINF</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-white/70">Ticket purchase</span>
+                  <span className="text-red-400">-0.15 WINF</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </aside>
   );
 };
