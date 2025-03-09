@@ -1,12 +1,30 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Diamond, Ticket, Trophy, Clock, ChevronRight, ChevronLeft, Info } from "lucide-react";
+import { 
+  Diamond, 
+  Ticket, 
+  Trophy, 
+  Clock, 
+  ChevronRight, 
+  ChevronLeft, 
+  Info,
+  AlertCircle,
+  CheckCircle2
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { LivePurchasesTable } from "@/components/lottery/LivePurchasesTable";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const LotteryPage = () => {
   const [jackpot, setJackpot] = useState(128.74);
@@ -18,9 +36,11 @@ const LotteryPage = () => {
   const [myNumbers, setMyNumbers] = useState<number[]>([]);
   const [isGeneratingNumbers, setIsGeneratingNumbers] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [myTickets, setMyTickets] = useState<{id: number, numbers: number[], purchaseDate: Date}[]>([]);
   const { toast } = useToast();
 
-  // Simulate jackpot increase
   useEffect(() => {
     const interval = setInterval(() => {
       setJackpot(prev => {
@@ -32,7 +52,6 @@ const LotteryPage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -43,7 +62,6 @@ const LotteryPage = () => {
         } else if (prev.hours > 0) {
           return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
         } else {
-          // When timer reaches zero, simulate a draw
           simulateDraw();
           return { hours: 23, minutes: 59, seconds: 59 };
         }
@@ -53,7 +71,6 @@ const LotteryPage = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Update total price when ticket count changes
   useEffect(() => {
     setTotalPrice(ticketCount * 0.01);
   }, [ticketCount]);
@@ -72,7 +89,6 @@ const LotteryPage = () => {
   const generateRandomNumbers = () => {
     setIsGeneratingNumbers(true);
     
-    // Simulate API call delay
     setTimeout(() => {
       const numbers = Array.from({ length: 5 }, () => Math.floor(Math.random() * 99) + 1);
       setMyNumbers(numbers);
@@ -85,6 +101,33 @@ const LotteryPage = () => {
     }, 800);
   };
 
+  const handleConfirmPurchase = () => {
+    setConfirmationOpen(false);
+    setIsPurchasing(true);
+    
+    setTimeout(() => {
+      setIsPurchasing(false);
+      setPurchaseSuccess(true);
+      
+      const newTickets = Array.from({ length: ticketCount }, (_, i) => ({
+        id: myTickets.length + i + 1,
+        numbers: myNumbers,
+        purchaseDate: new Date()
+      }));
+      
+      setMyTickets(prev => [...prev, ...newTickets]);
+      
+      toast({
+        title: "Tickets Purchased Successfully!",
+        description: `You've purchased ${ticketCount} ticket(s) for the next draw.`,
+      });
+      
+      setTimeout(() => {
+        setPurchaseSuccess(false);
+      }, 5000);
+    }, 1500);
+  };
+
   const handleTicketPurchase = () => {
     if (myNumbers.length === 0) {
       toast({
@@ -95,17 +138,7 @@ const LotteryPage = () => {
       return;
     }
     
-    setIsPurchasing(true);
-    
-    // Simulate purchase delay
-    setTimeout(() => {
-      setIsPurchasing(false);
-      
-      toast({
-        title: "Tickets Purchased Successfully!",
-        description: `You've purchased ${ticketCount} ticket(s) for the next draw.`,
-      });
-    }, 1500);
+    setConfirmationOpen(true);
   };
 
   const increaseTickets = () => {
@@ -121,6 +154,47 @@ const LotteryPage = () => {
     { id: 121, date: "Mar 06, 2025", numbers: [5, 17, 22, 41, 63], winner: "0x7f...9d2e", prize: "76.32 ETH" },
     { id: 120, date: "Mar 05, 2025", numbers: [8, 19, 27, 33, 59], winner: "0x4b...6a8c", prize: "65.18 ETH" }
   ];
+
+  const [livePurchases, setLivePurchases] = useState<{
+    id: string;
+    walletAddress: string;
+    ticketCount: number;
+    timestamp: Date;
+  }[]>([]);
+
+  useEffect(() => {
+    const dummyAddresses = [
+      "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+      "0x7cB57B5A97eAbe94205C07890BE4c1aD31E486A8",
+      "0x2546BcD3c84621e976D8185a91A922aE77ECEc30",
+      "0xbDA5747bFD65F08deb54cb465eB87D40e51B197E",
+      "0xdD2FD4581271e230360230F9337D5c0430Bf44C0",
+      "0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199"
+    ];
+
+    const initialPurchases = Array.from({ length: 10 }, (_, i) => ({
+      id: `purchase-${i}`,
+      walletAddress: dummyAddresses[Math.floor(Math.random() * dummyAddresses.length)],
+      ticketCount: Math.floor(Math.random() * 5) + 1,
+      timestamp: new Date(Date.now() - Math.floor(Math.random() * 1000 * 60 * 60 * 24))
+    }));
+
+    setLivePurchases(initialPurchases);
+
+    const interval = setInterval(() => {
+      const newPurchase = {
+        id: `purchase-${Date.now()}`,
+        walletAddress: dummyAddresses[Math.floor(Math.random() * dummyAddresses.length)],
+        ticketCount: Math.floor(Math.random() * 5) + 1,
+        timestamp: new Date()
+      };
+
+      setLivePurchases(prev => [newPurchase, ...prev.slice(0, 9)]);
+      
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="max-w-[1400px] mx-auto">
@@ -232,6 +306,25 @@ const LotteryPage = () => {
                   )}
                 </Button>
               </div>
+              
+              {purchaseSuccess && (
+                <div className="mt-4 bg-winfinity-cyan/20 border border-winfinity-cyan/30 rounded-lg p-3 animate-pulse">
+                  <div className="flex items-center">
+                    <CheckCircle2 className="text-winfinity-cyan mr-2" size={20} />
+                    <div>
+                      <p className="text-white font-medium">Transaction Successful!</p>
+                      <a 
+                        href={`https://sepolia.etherscan.io/tx/0x${Math.random().toString(16).slice(2)}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-winfinity-cyan text-sm hover:underline"
+                      >
+                        View on Etherscan
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           
@@ -264,19 +357,48 @@ const LotteryPage = () => {
                     
                     <h3 className="text-xl font-bold text-white mb-2">Your Active Tickets</h3>
                     <div className="space-y-3">
-                      {/* For demo, show no tickets initially */}
-                      <div className="text-white/70 py-8 text-center">
-                        You don't have any active tickets for the current draw.
-                        <div className="mt-2">
-                          <Button
-                            variant="link"
-                            className="text-winfinity-cyan"
-                            onClick={generateRandomNumbers}
-                          >
-                            Generate numbers and buy tickets now!
-                          </Button>
+                      {myTickets.length > 0 ? (
+                        myTickets.map((ticket) => (
+                          <div key={ticket.id} className="bg-winfinity-blue/30 rounded-lg p-3 border border-winfinity-cyan/30">
+                            <div className="flex justify-between items-center mb-2">
+                              <div className="text-white font-medium">Ticket #{ticket.id}</div>
+                              <div className="text-white/70 text-sm">
+                                {ticket.purchaseDate.toLocaleDateString()} {ticket.purchaseDate.toLocaleTimeString()}
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {ticket.numbers.map((number, idx) => (
+                                <div key={idx} className="bg-winfinity-cyan/20 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm border border-winfinity-cyan/40">
+                                  {number}
+                                </div>
+                              ))}
+                            </div>
+                            <div className="text-right">
+                              <a 
+                                href={`https://sepolia.etherscan.io/tx/0x${Math.random().toString(16).slice(2)}`}
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-winfinity-cyan text-xs hover:underline"
+                              >
+                                View Transaction
+                              </a>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-white/70 py-8 text-center">
+                          You don't have any active tickets for the current draw.
+                          <div className="mt-2">
+                            <Button
+                              variant="link"
+                              className="text-winfinity-cyan"
+                              onClick={generateRandomNumbers}
+                            >
+                              Generate numbers and buy tickets now!
+                            </Button>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </TabsContent>
@@ -326,7 +448,10 @@ const LotteryPage = () => {
         </div>
       </div>
       
-      {/* How It Works Section */}
+      <div className="mb-8">
+        <LivePurchasesTable purchases={livePurchases} />
+      </div>
+      
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-white mb-6 text-center">How It Works</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -368,7 +493,6 @@ const LotteryPage = () => {
         </div>
       </div>
       
-      {/* Prize Structure */}
       <div>
         <h2 className="text-2xl font-bold text-white mb-6 text-center">Prize Structure</h2>
         <Card className="bg-winfinity-blue/10 border-winfinity-blue/30">
@@ -411,8 +535,54 @@ const LotteryPage = () => {
           </CardContent>
         </Card>
       </div>
+      
+      <Dialog open={confirmationOpen} onOpenChange={setConfirmationOpen}>
+        <DialogContent className="bg-winfinity-darker-blue border-winfinity-blue/30 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-white">Confirm Purchase</DialogTitle>
+            <DialogDescription className="text-white/70">
+              You are about to purchase {ticketCount} lottery ticket{ticketCount > 1 ? 's' : ''}.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <div className="flex justify-between py-2 border-b border-winfinity-blue/20">
+              <span className="text-white/70">Tickets:</span>
+              <span className="text-white font-medium">{ticketCount} x 0.01 ETH</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-winfinity-blue/20">
+              <span className="text-white/70">Total Amount:</span>
+              <span className="text-winfinity-cyan font-semibold">{totalPrice.toFixed(2)} ETH</span>
+            </div>
+            
+            <div className="mt-4 flex items-start gap-2 bg-winfinity-blue/20 p-3 rounded-lg">
+              <AlertCircle className="text-winfinity-yellow flex-shrink-0 mt-0.5" size={16} />
+              <div className="text-sm text-white/90">
+                This will trigger a MetaMask transaction. Confirm in your wallet to complete the purchase.
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              className="border-winfinity-blue/30 text-white hover:bg-winfinity-blue/20"
+              onClick={() => setConfirmationOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              className="bg-winfinity-cyan text-winfinity-darker-blue hover:bg-winfinity-cyan/90"
+              onClick={handleConfirmPurchase}
+            >
+              Confirm & Pay
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 export default LotteryPage;
+
