@@ -13,15 +13,7 @@ const HomePage = () => {
   const [showAnimation, setShowAnimation] = useState(false);
 
   const slides = [
-    {
-      title: "Win the Mega Jackpot",
-      subtitle: "Next draw in:",
-      description: "Purchase tickets now for a chance to win the growing jackpot!",
-      cta: "Buy Tickets",
-      path: "/lottery",
-      gradient: "from-winfinity-purple to-winfinity-cyan",
-      image: "/lovable-uploads/1401250f-f7ab-40b8-bda1-295c0a9216d7.png"
-    },
+    
     {
       title: "Daily Crypto Rewards",
       subtitle: "Exclusive for members",
@@ -129,32 +121,7 @@ const HomePage = () => {
                   {slides[currentSlide].description}
                 </p>
                 
-                {currentSlide === 0 && (
-                  <div className="mb-6">
-                    <div className="flex items-center mb-2">
-                      <Diamond className="text-winfinity-cyan mr-2" size={24} />
-                      <span className="text-xl text-white font-semibold">Current Jackpot:</span>
-                    </div>
-                    <div className="text-4xl md:text-5xl font-bold text-winfinity-cyan mb-4">
-                      {jackpot} ETH
-                    </div>
-                    
-                    <div className="flex space-x-3">
-                      <div className="bg-winfinity-blue/50 rounded p-2 w-16 text-center">
-                        <div className="text-2xl font-bold text-white">{timeLeft.hours.toString().padStart(2, '0')}</div>
-                        <div className="text-xs text-white/70">Hours</div>
-                      </div>
-                      <div className="bg-winfinity-blue/50 rounded p-2 w-16 text-center">
-                        <div className="text-2xl font-bold text-white">{timeLeft.minutes.toString().padStart(2, '0')}</div>
-                        <div className="text-xs text-white/70">Minutes</div>
-                      </div>
-                      <div className="bg-winfinity-blue/50 rounded p-2 w-16 text-center">
-                        <div className="text-2xl font-bold text-white">{timeLeft.seconds.toString().padStart(2, '0')}</div>
-                        <div className="text-xs text-white/70">Seconds</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                
                 
                 <div>
                   <Link to={slides[currentSlide].path}>

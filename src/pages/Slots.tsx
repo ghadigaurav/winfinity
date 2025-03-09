@@ -102,31 +102,7 @@ const SlotsPage = () => {
         </Card>
       </div>
       
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white mb-6">Popular Slots</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[
-            { id: 1, title: "Crypto Vault", image: "https://images.unsplash.com/photo-1642790551116-304f59842e88?q=80&w=300&auto=format&fit=crop" },
-            { id: 2, title: "Neon City", image: "https://images.unsplash.com/photo-1545486332-9e0999c535b2?q=80&w=300&auto=format&fit=crop" },
-            { id: 3, title: "Diamond Rush", image: "https://images.unsplash.com/photo-1600077105425-1a8490f10a43?q=80&w=300&auto=format&fit=crop" },
-            { id: 4, title: "Cosmic Spins", image: "https://images.unsplash.com/photo-1520034475321-cbe63696469a?q=80&w=300&auto=format&fit=crop" }
-          ].map(game => (
-            <Card key={game.id} className="bg-winfinity-blue/20 border-winfinity-blue/30 overflow-hidden hover:border-winfinity-cyan/50 transition-all hover:shadow-lg hover:shadow-winfinity-cyan/10 group">
-              <div className="relative h-36 overflow-hidden">
-                <img 
-                  src={game.image} 
-                  alt={game.title}
-                  className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-winfinity-darker-blue to-transparent opacity-60" />
-                <div className="absolute bottom-2 left-2 right-2">
-                  <div className="text-sm font-semibold text-white">{game.title}</div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
+      
       
       <Card className="bg-winfinity-blue/10 border-winfinity-blue/30 p-6">
         <h2 className="text-2xl font-bold text-white mb-4">How It Works</h2>

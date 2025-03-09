@@ -113,12 +113,11 @@ export const Sidebar = () => {
         
         <div className="space-y-1 px-3">
           <NavItem to="/" icon={Home} label="Home" />
-          <NavItem to="/lottery" icon={Ticket} label="Lottery" />
+          
           <NavItem to="/casino" icon={Dices} label="Casino" />
           <NavItem to="/slots" icon={Spade} label="Slots" />
           <NavItem to="/blackjack" icon={Armchair} label="Blackjack" />
-          <NavItem to="/crash" icon={TrendingUp} label="Crash" />
-          <NavItem to="/plinko" icon={Dices} label="Plinko" />
+          
         </div>
         
         <div className="mt-6 px-3">
