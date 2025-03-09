@@ -1,7 +1,6 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, MessageCircle, Trophy, ExternalLink, Discord } from "lucide-react";
+import { Users, MessageCircle, Trophy, ExternalLink, MessageSquare } from "lucide-react";
 
 const CommunityPage = () => {
   const handleJoinDiscord = () => {
@@ -25,7 +24,7 @@ const CommunityPage = () => {
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="w-12 h-12 rounded-full bg-[#5865F2]/20 flex items-center justify-center">
-                  <Discord size={28} className="text-[#5865F2]" />
+                  <MessageSquare size={28} className="text-[#5865F2]" />
                 </div>
                 <div className="px-3 py-1 bg-[#5865F2]/20 text-[#5865F2] rounded-full text-xs font-semibold">
                   Official
@@ -62,7 +61,7 @@ const CommunityPage = () => {
                 className="w-full bg-[#5865F2] hover:bg-[#5865F2]/90 text-white"
                 onClick={handleJoinDiscord}
               >
-                <Discord className="mr-2" size={18} />
+                <MessageSquare className="mr-2" size={18} />
                 Join Discord Server
                 <ExternalLink className="ml-2" size={16} />
               </Button>
